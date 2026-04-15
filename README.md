@@ -1,32 +1,45 @@
 # Biofetch
 
-Biofetch automatically download the fastq files from your samplesheet csv, as long as they have valid accession ID
+Biofetch automatically download the fastq files from your samplesheet csv, as long as they have valid accession ID.
 
-Available sources for retrieval: 
+Available sites for retrieval: 
 
 - [ENA](https://www.ebi.ac.uk/ena/browser/home)
-- [SRA](https://www.ncbi.nlm.nih.gov/sra)
-- [GEO](https://www.ncbi.nlm.nih.gov/geo/)
+- [NCBI](https://www.ncbi.nlm.nih.gov/)
 
-# To test the module:
+# Running the pipeline:
 
 ```
-nextflow run main.nf \
-    --input data/data.csv \
-    --outdir data/ \
-    -resume | tee headnode.log
+nextflow run main.nf --input <design.csv/accession>
 ```
 
-`--input`: must be either a path to a samplesheet file, or a valid accession ID from the aforementioned sources.
+`--input` (required): either a `csv` file of accession or an accession string.
 
-`--outdir`: the path to output your downloaded files.
+Current support accessions include:
+- Project accession: PRJEB / PRJNA
+- Run accession: ERR / SRR
 
-`--withSRA` (optional): download SRA files along with the GEO supplementary files.
+## The input design file must be structured as:
 
-You can modify the samplesheet in `data/` to test the module.
+```
+SRRXXXXXXXX
+PRJEBXXXXXX
+ERRXXXXXXXX
+PRJNAXXXXXX
+```
+
+No header nor extra columns is needed.
+
+## Creating samplesheet output:
+When run with default (`skip_design` = false), the output directory contain samplesheet for each `project_id` as follows:
+
+```
+project,run,fastq_1,fastq_2
+PRJEBXXXXXX,ERRXXXXXX,/path/to/ERRXXXXXX_R1.fastq.gz,/path/to/ERRXXXXXX_R2.fastq.gz
+```
 
 # Future improvements:
 
-1/single-end & paired-end sanity check
-
-2/curl options
+- [ ] Add support for [DDBJ](https://www.ddbj.nig.ac.jp/index-e.html) accessions.
+- [ ] Create report to summarize the sequencing data downloaded
+- [ ] Module to output custom config based on downloaded files
